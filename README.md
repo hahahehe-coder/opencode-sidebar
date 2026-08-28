@@ -18,7 +18,7 @@ Claude Code 和 Codex 都有好用的 VS Code 扩展,但当你想给 OpenCode �
 
 坦白说:
 
-- ❌ **第三方插件年久失修**——opencode 迭代飞快,插件作者跟不上,聊天界面停留在几个版本前,Agent、终端、权限审批等新能力永远"开发中"
+- ❌ **第三方插件年久失修**——opencode 迭代飞快,插件作者跟不上,聊天界面停留在几个版本前,有些集成 webui 的其他项目,项目页展示异常,可能看不到之前的会话列表,只能新建会话
 - ❌ **官方 VS Code 集成只是开了个 TUI**——在 VS Code 终端面板里跑一个终端 UI,体验非常别扭
 - ❌ **自己重写 UI 的插件**——重写意味着滞后、缺功能、bug 修不完
 
@@ -34,13 +34,13 @@ OpenCode 官方的 WebUI 已经具备一切:完整的聊天流、会话管理、
 - ✅ **主题实时同步**——VS Code 换深浅主题,OpenCode 跟着换,毫无违和
 - ✅ **终端、SSE、WebSocket 全透传**——PTY 终端和事件流在侧边栏里和浏览器里一模一样
 
-### 截图
+### 展示
 
 **项目页:打开项目即自动定位,历史会话一目了然**
 
 ![项目页](images/project_page.png)
 
-**对话页:官方 WebUI 完整体验,常驻侧边栏**
+**对话页:官方 WebUI 完整体验,常驻侧边栏** 建议使用 Ctrl+Alt+B 切换辅助侧栏
 
 ![对话页](images/sidebar.png)
 
@@ -88,7 +88,7 @@ Claude Code and Codex both have great VS Code extensions. Try to find one for Op
 
 Honestly:
 
-- ❌ **Third-party extensions are abandoned** — opencode moves fast, extension authors can't keep up. The chat UI lags versions behind; Agents, terminals, permission approvals are forever "in development"
+- ❌ **Third-party extensions are abandoned** — opencode moves fast, extension authors can't keep up. The chat UI lags versions behind. Some projects that integrate the WebUI even show the project page incorrectly — you may not see your previous session list at all and can only create new sessions
 - ❌ **The official VS Code integration is just a TUI** — a terminal UI running in the terminal panel. No session management, no click interactions. Feels extremely awkward
 - ❌ **Extensions that rewrite the UI** — rewriting means lagging behind, missing features, and endless bugs
 
@@ -104,13 +104,13 @@ So this extension does exactly one thing: **embed the official WebUI losslessly 
 - ✅ **Live theme sync** — switch VS Code between light/dark and OpenCode follows instantly
 - ✅ **Terminal, SSE, WebSocket — fully passthrough** — PTY terminals and event streams behave exactly like in the browser
 
-### Screenshots
+### Demo
 
 **Project page: opens your workspace automatically, session history at a glance**
 
 ![Project page](images/project_page.png)
 
-**Chat page: the full official WebUI, docked in your sidebar**
+**Chat page: the full official WebUI, docked in your sidebar** — press `Ctrl+Alt+B` to toggle the secondary sidebar
 
 ![Chat page](images/sidebar.png)
 
