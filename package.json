@@ -2,7 +2,7 @@
 	"name": "opencode-webui-sidebar",
 	"displayName": "OpenCode WebUI Sidebar",
 	"description": "Embeds the official OpenCode web UI in a VS Code sidebar view, bound to the current workspace, with theme synchronization.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"publisher": "hahahehe",
 	"license": "MIT",
 	"repository": {
