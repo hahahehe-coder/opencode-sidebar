@@ -44,6 +44,10 @@ OpenCode 官方的 WebUI 已经具备一切:完整的聊天流、会话管理、
 
 ![对话页](images/sidebar.png)
 
+**深色主题:VS Code 换主题,OpenCode 实时跟随,毫无违和**
+
+![深色主题](images/dark_mode.png)
+
 ### 快速开始
 
 1. 安装 [OpenCode CLI](https://opencode.ai) 并确保 `opencode --version` 可用
@@ -113,6 +117,10 @@ So this extension does exactly one thing: **embed the official WebUI losslessly 
 **Chat page: the full official WebUI, docked in your sidebar** — press `Ctrl+Alt+B` to toggle the secondary sidebar
 
 ![Chat page](images/sidebar.png)
+
+**Dark theme: switch your VS Code theme and OpenCode follows instantly — seamless**
+
+![Dark theme](images/dark_mode.png)
 
 ### Getting Started
 
