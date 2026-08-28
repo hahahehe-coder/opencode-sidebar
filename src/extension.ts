@@ -75,6 +75,12 @@ export function activate(context: vscode.ExtensionContext): void {
 		}),
 	);
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand("opencodeSidebar.showLog", () => {
+			log.show();
+		}),
+	);
+
 	// Restart against the new folder when the workspace changes.
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeWorkspaceFolders(() => {
