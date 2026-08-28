@@ -1,22 +1,24 @@
-# OpenCode Sidebar
+# OpenCode WebUI Sidebar
 
-[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/hahahehe.opencode-sidebar?label=VS%20Marketplace&color=blue)](https://marketplace.visualstudio.com/items?itemName=hahahehe.opencode-sidebar)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/hahahehe.opencode-sidebar)](https://marketplace.visualstudio.com/items?itemName=hahahehe.opencode-sidebar)
+[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/hahahehe.opencode-webui-sidebar?label=VS%20Marketplace&color=blue)](https://marketplace.visualstudio.com/items?itemName=hahahehe.opencode-webui-sidebar)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/hahahehe.opencode-webui-sidebar)](https://marketplace.visualstudio.com/items?itemName=hahahehe.opencode-webui-sidebar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**在 VS Code 侧边栏里使用 100% 官方的 OpenCode WebUI。** 不是又一个套壳重写,不是嵌入一个 TUI 终端,而是把 OpenCode 官方那套完整、现代、持续迭代的 Web 界面,原封不动装进你的侧边栏。
+**在 VS Code 侧边栏里使用官方的 OpenCode WebUI。** 不是又一个重写,不是嵌入一个 TUI 终端,而是把 OpenCode 官方那套完整、现代、持续迭代的 Web 界面,原封不动装进你的侧边栏。
 
 ## 现有的 OpenCode 插件,为什么都不好用?
+
+claude code 和 codex 都有好用的 VSCode 拓展，但当你尝试查找 opencode 拓展时，却发现，为啥都不怎么好用呢？
 
 坦白说:
 
 - ❌ **第三方插件年久失修**——opencode 迭代飞快,插件作者跟不上,聊天界面停留在几个版本前,Agent、终端、权限审批等新能力永远"开发中"
-- ❌ **官方 VS Code 集成只是开了个 TUI**——在 VS Code 终端面板里跑一个终端 UI,没有会话管理、没有文件树、没有点击交互,体验和 2026 年格格不入
-- ❌ **自己重写 UI 的插件**——重写意味着滞后、缺功能、bug 修不完,你花钱( token )买来的能力,插件里用不上
+- ❌ **官方 VS Code 集成只是开了个 TUI**——在 VS Code 终端面板里跑一个终端 UI,体验非常别扭
+- ❌ **自己重写 UI 的插件**——重写意味着滞后、缺功能、bug 修不完
 
 ## OpenCode Sidebar 的思路:官方 WebUI 已经很完善,直接用它
 
-OpenCode 官方的 WebUI(`opencode serve` 自带)已经具备一切:完整的聊天流、会话管理、内嵌终端、文件差异、权限审批、MCP 工具……**这套界面由 opencode 官方团队持续打磨,永远最新。**
+OpenCode 官方的 WebUI 已经具备一切:完整的聊天流、会话管理、内嵌终端、文件差异、权限审批、MCP 工具展示……**这套界面由 opencode 官方团队持续打磨,永远最新。**
 
 所以这个扩展只做一件事:**把官方 WebUI 无损装进 VS Code 侧边栏**。
 
