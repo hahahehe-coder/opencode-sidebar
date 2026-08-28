@@ -38,11 +38,11 @@ OpenCode 官方的 WebUI 已经具备一切:完整的聊天流、会话管理、
 
 **项目页:打开项目即自动定位,历史会话一目了然**
 
-![项目页](project_page.png)
+![项目页](images/project_page.png)
 
 **对话页:官方 WebUI 完整体验,常驻侧边栏**
 
-![对话页](sidebar.png)
+![对话页](images/sidebar.png)
 
 ### 快速开始
 
@@ -108,11 +108,11 @@ So this extension does exactly one thing: **embed the official WebUI losslessly 
 
 **Project page: opens your workspace automatically, session history at a glance**
 
-![Project page](project_page.png)
+![Project page](images/project_page.png)
 
 **Chat page: the full official WebUI, docked in your sidebar**
 
-![Chat page](sidebar.png)
+![Chat page](images/sidebar.png)
 
 ### Getting Started
 
