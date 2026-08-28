@@ -1,0 +1,122 @@
+{
+	"name": "opencode-sidebar",
+	"displayName": "OpenCode Sidebar",
+	"description": "Embeds the official OpenCode web UI in a VS Code sidebar view, bound to the current workspace, with theme synchronization.",
+	"version": "0.1.0",
+	"publisher": "hahahehe",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hahahehe-coder/opencode-sidebar"
+	},
+	"keywords": [
+		"opencode",
+		"ai",
+		"coding assistant",
+		"sidebar",
+		"webview"
+	],
+	"engines": {
+		"vscode": "^1.106.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Other"
+	],
+	"activationEvents": ["onStartupFinished"],
+	"main": "./dist/extension.js",
+	"icon": "media/icon.png",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "opencode-sidebar",
+					"title": "OpenCode",
+					"icon": "media/icon.svg",
+					"when": "opencodeSidebar:secondarySidebarUnsupported"
+				}
+			],
+			"secondarySidebar": [
+				{
+					"id": "opencode-sidebar-secondary",
+					"title": "OpenCode",
+					"icon": "media/icon.svg",
+					"when": "!opencodeSidebar:secondarySidebarUnsupported"
+				}
+			]
+		},
+		"views": {
+			"opencode-sidebar": [
+				{
+					"type": "webview",
+					"id": "opencodeSidebar.panel",
+					"name": "OpenCode"
+				}
+			],
+			"opencode-sidebar-secondary": [
+				{
+					"type": "webview",
+					"id": "opencodeSidebar.panelSecondary",
+					"name": "OpenCode"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "opencodeSidebar.restart",
+				"title": "OpenCode Sidebar: Restart Server",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "opencodeSidebar.openInBrowser",
+				"title": "OpenCode Sidebar: Open in Browser",
+				"icon": "$(link-external)"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "opencodeSidebar.restart",
+					"group": "navigation",
+					"when": "view == opencodeSidebar.panel || view == opencodeSidebar.panelSecondary"
+				},
+				{
+					"command": "opencodeSidebar.openInBrowser",
+					"group": "navigation",
+					"when": "view == opencodeSidebar.panel || view == opencodeSidebar.panelSecondary"
+				}
+			]
+		},
+		"configuration": {
+			"title": "OpenCode Sidebar",
+			"properties": {
+				"opencodeSidebar.serverPath": {
+					"type": "string",
+					"default": "",
+					"description": "Path to the opencode executable. Leave empty to use the one found on PATH."
+				},
+				"opencodeSidebar.proxyPort": {
+					"type": "number",
+					"default": 0,
+					"description": "Port for the local proxy server. 0 picks a random free port."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run build",
+		"build": "node esbuild.js",
+		"watch": "node esbuild.js --watch",
+		"typecheck": "tsc --noEmit",
+		"test": "npm run build && node dist/test/integration-test.js",
+		"package": "npx @vscode/vsce package"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.0",
+		"@types/vscode": "^1.94.0",
+		"@types/ws": "^8.5.13",
+		"esbuild": "^0.25.3",
+		"typescript": "^5.8.3",
+		"ws": "^8.18.0"
+	}
+}

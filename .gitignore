@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.vsix
+.playwright-cli/
+.tmp-e2e/
+.omo/
+.codegraph/

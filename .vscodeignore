@@ -1,0 +1,13 @@
+src/**
+node_modules/**
+dist/test/**
+dist/**/*.map
+esbuild.js
+tsconfig.json
+.vscode/**
+.omo/**
+.playwright-cli/**
+.tmp-e2e/**
+**/*.md
+package-lock.json
+.codegraph/**
