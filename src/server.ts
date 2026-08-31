@@ -1,10 +1,12 @@
-import { spawn, ChildProcess } from "child_process";
+import { spawn, spawnSync, ChildProcess } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 
 export interface OpencodeServer {
 	readonly url: string;
 	readonly port: number;
+	/** PID of the spawned `opencode serve` process (the tree root). */
+	readonly pid: number;
 	stop(): Promise<void>;
 }
 
@@ -12,6 +14,8 @@ interface SpawnOptions {
 	serverPath?: string;
 	cwd: string;
 	log: (line: string) => void;
+	/** Invoked as soon as the process is spawned (before it reports ready). */
+	onSpawned?: (pid: number) => void;
 }
 
 function resolveServerBinary(serverPath?: string): { command: string; args: string[] } {
@@ -70,6 +74,27 @@ function killTree(proc: ChildProcess): Promise<void> {
 }
 
 /**
+ * Synchronously kills a process tree by PID (no child handle needed). Used to
+ * reap orphaned `opencode serve` processes on the next extension activation.
+ * Returns true when a kill was issued.
+ */
+export function killTreeByPid(pid: number): boolean {
+	try {
+		if (process.platform === "win32") {
+			const r = spawnSync("taskkill", ["/PID", String(pid), "/T", "/F"], {
+				stdio: "ignore",
+				windowsHide: true,
+			});
+			return r.status === 0;
+		}
+		process.kill(pid, "SIGTERM");
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Spawns `opencode serve --hostname 127.0.0.1` with the given cwd and resolves
  * once the server prints its listening URL. The port is chosen by opencode
  * itself (its default is OS-assigned; a configured default like 4096 wins if set) —
@@ -93,6 +118,13 @@ export function startOpencodeServer(opts: SpawnOptions): Promise<OpencodeServer>
 		} catch (err) {
 			reject(new Error(`Failed to spawn opencode: ${String(err)}`));
 			return;
+		}
+
+		// Track the PID immediately so a shutdown while the server is still
+		// starting up can still reap it (the resolved OpencodeServer, and its
+		// stop(), only exist after the listening URL is printed).
+		if (child.pid !== undefined) {
+			opts.onSpawned?.(child.pid);
 		}
 
 		let settled = false;
@@ -126,9 +158,16 @@ export function startOpencodeServer(opts: SpawnOptions): Promise<OpencodeServer>
 					clearTimeout(timeout);
 					try {
 						const url = new URL(match[1]);
+						const pid = child.pid;
+						if (pid === undefined) {
+							clearTimeout(timeout);
+							reject(new Error("Failed to read the opencode server process id."));
+							return;
+						}
 						resolve({
 							url: match[1],
 							port: Number(url.port),
+							pid,
 							stop: async () => {
 								await killTree(child);
 							},
