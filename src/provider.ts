@@ -38,18 +38,30 @@ export class OpencodePanelProvider implements vscode.WebviewViewProvider {
 		this.view = webviewView;
 
 		webviewView.webview.onDidReceiveMessage((msg: unknown) => {
-			if (
-				msg &&
-				typeof msg === "object" &&
-				"type" in msg &&
-				(msg as { type: string }).type === "ready"
-			) {
+			if (!msg || typeof msg !== "object" || !("type" in msg)) return;
+			const m = msg as { type: string; url?: unknown };
+			if (m.type === "ready") {
 				this.log.info("webview relay ready");
 				// The relay page just (re)loaded and any earlier theme postMessage
 				// was dropped, so push the current mode now. The shim also applies
 				// it inside the iframe once that finishes loading.
 				if (this.lastMode) {
 					void webviewView.webview.postMessage({ type: "theme", mode: this.lastMode } satisfies RelayCommand);
+				}
+				return;
+			}
+			if (m.type === "openExternal") {
+				if (typeof m.url !== "string") return;
+				try {
+					const uri = vscode.Uri.parse(m.url);
+					const scheme = uri.scheme.toLowerCase();
+					// Only forward protocols the user can do something useful with.
+					// Anything else (file:, javascript:, data:, ...) is dropped to
+					// keep the bridge safe even if a stale page is loaded.
+					if (scheme !== "http" && scheme !== "https" && scheme !== "mailto") return;
+					void vscode.env.openExternal(uri);
+				} catch (err) {
+					this.log.warn(`openExternal failed for ${m.url}: ${String(err)}`);
 				}
 			}
 		});
@@ -112,8 +124,26 @@ const RELAY_JS = `
 const vscode = acquireVsCodeApi();
 const frame = document.getElementById("frame");
 
+// External links inside the WebUI (rendered as <a target="_blank"> or opened
+// via window.open()) are silently swallowed by the VS Code webview host
+// because the iframe is sandboxed. The proxy shim forwards every external
+// http(s)/mailto URL here via window.parent.postMessage; we forward it to
+// the extension host which calls vscode.env.openExternal() with the user's
+// system default.
+function isExternalUrl(url) {
+  if (typeof url !== "string" || url.length === 0) return false;
+  if (url[0] === "#" || url[0] === "/") return false;
+  try {
+    var proto = new URL(url, window.location.href).protocol;
+    return proto === "http:" || proto === "https:" || proto === "mailto:";
+  } catch (e) {
+    return false;
+  }
+}
+
 window.addEventListener("message", (event) => {
   // Messages from the extension host arrive with origin vscode-webview://.
+  // Messages from the iframe arrive with origin http://127.0.0.1:<port>.
   const data = event.data;
   if (!data || typeof data !== "object") return;
   if (data.type === "theme") {
@@ -121,6 +151,12 @@ window.addEventListener("message", (event) => {
       frame.contentWindow.postMessage({ type: "opencodeSidebar:theme", mode: data.mode }, "*");
       if (data.mode !== "system") setUrlParam("__ocsMode", data.mode);
     }
+    return;
+  }
+  if (data.type === "opencodeSidebar:openExternal") {
+    if (event.source !== frame.contentWindow) return;
+    if (typeof data.url !== "string" || !isExternalUrl(data.url)) return;
+    vscode.postMessage({ type: "openExternal", url: data.url });
   }
 });
 

@@ -28,6 +28,10 @@ export interface ProxyTarget {
  * 3. Listen for postMessage({type:"opencodeSidebar:theme", mode}) from the
  *    webview host and re-apply the scheme live by writing localStorage and
  *    mutating dataset.colorScheme — both are signals the app already reacts to.
+ * 4. Bridge external-link clicks out of the sandboxed iframe to the extension
+ *    host, which opens them with vscode.env.openExternal. Without this, links
+ *    rendered by the WebUI as <a target="_blank"> or via window.open() are
+ *    silently swallowed by the VS Code webview host.
  */
 function buildInjectScript(directory: string): string {
 	// The WebUI strips backslashes out of the worktree when it builds
@@ -90,6 +94,56 @@ function buildInjectScript(directory: string): string {
       applyLive(data.mode);
     }
   });
+
+  // Bridge external-link clicks out of the sandboxed iframe. The WebUI renders
+  // markdown links as <a target="_blank" onClick={stopPropagation}>, and
+  // share/usage links call platform.openExternal() which resolves to
+  // window.open(url, "_blank"). The VS Code webview host silently swallows
+  // both forms of new-window navigation, so without this bridge, links in AI
+  // replies do nothing when clicked. We forward http(s)/mailto URLs to the
+  // outer relay page, which calls vscode.env.openExternal().
+  function isExternalUrl(href) {
+    if (typeof href !== "string" || href.length === 0) return false;
+    if (href[0] === "#" || href[0] === "/") return false;
+    var proto = null;
+    try { proto = new URL(href, window.location.href).protocol; } catch (e) { return false; }
+    return proto === "http:" || proto === "https:" || proto === "mailto:";
+  }
+  function forwardExternal(url) {
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: "opencodeSidebar:openExternal", url: url }, "*");
+      }
+    } catch (e) {}
+  }
+  // 1) Capture-phase click handler covers <a target="_blank"> (the WebUI's
+  //    markdown link renderer), <a href="..."> without target, and any link
+  //    that some component opens by simulating a click.
+  document.addEventListener("click", function (event) {
+    if (event.defaultPrevented) return;
+    var anchor = event.target;
+    while (anchor && anchor !== document) {
+      if (anchor.tagName === "A") break;
+      anchor = anchor.parentNode;
+    }
+    if (!anchor || anchor === document) return;
+    if (typeof anchor.href !== "string") return;
+    if (!isExternalUrl(anchor.href)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    forwardExternal(anchor.href);
+  }, true);
+  // 2) window.open() covers the WebUI's platform.openExternal() path
+  //    (message-timeline share, dialog-usage-exceeded, terminal links, etc.).
+  var nativeOpen = window.open;
+  window.open = function (url, target, features) {
+    if (isExternalUrl(url)) {
+      forwardExternal(url);
+      return null;
+    }
+    return nativeOpen ? nativeOpen.call(window, url, target, features) : null;
+  };
+
   boot();
 })();
 </script>

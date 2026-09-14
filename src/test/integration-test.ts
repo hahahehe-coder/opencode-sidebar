@@ -38,6 +38,11 @@ async function main(): Promise<void> {
 		assert(html.includes("opencodeSidebar:theme"), "HTML contains injected theme shim");
 		assert(html.includes("opencode.global.dat:server.v3"), "HTML contains injected project-seed shim");
 		assert(html.includes(JSON.stringify(cwd.replaceAll("\\", "/"))), "injected shim carries the workspace directory (forward-slashed)");
+		// External-link bridge: the shim must forward http(s)/mailto clicks and
+		// window.open() calls out to the outer relay page. Without these, links
+		// in AI replies are silently swallowed by the VS Code webview host.
+		assert(html.includes("opencodeSidebar:openExternal"), "HTML contains the external-link bridge marker");
+		assert(html.includes("window.open = function"), "HTML rewrites window.open to forward external URLs");
 
 		// 2. Marker params are stripped before hitting upstream (page still renders)
 		const markerRes = await fetch(`http://127.0.0.1:${proxy.port}/?__ocsMode=dark`);

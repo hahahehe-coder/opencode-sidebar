@@ -57,6 +57,7 @@ OpenCode 官方的 WebUI 已经具备一切:完整的聊天流、会话管理、
 
 - **重启服务**——点击视图标题栏的 `⟳` 按钮：改了 `opencode.json` 等配置后，点一下立即重启 `opencode serve`，新配置马上生效，无需重载 VS Code 窗口
 - **在浏览器打开**——点击视图标题栏的 `↗` 按钮：在系统浏览器里打开当前 WebUI，方便单独使用或配合端口转发
+- **AI 回复中的链接**——直接点：markdown 里的 URL 会被路由到系统默认浏览器（外部链接转发）
 
 ### 工作原理
 
@@ -137,6 +138,7 @@ So this extension does exactly one thing: **embed the official WebUI losslessly 
 
 - **Restart server** — click the `⟳` button in the view title bar: after editing `opencode.json` or other config, one click restarts `opencode serve` and the new config takes effect immediately — no need to reload the VS Code window
 - **Open in browser** — click the `↗` button in the view title bar: opens the current WebUI in your system browser, handy for standalone use or combined with port forwarding
+- **Links in AI replies** — just click: URLs in markdown (and the share/usage link buttons) are routed to your system's default browser via the external-link bridge
 
 ### How it works
 
