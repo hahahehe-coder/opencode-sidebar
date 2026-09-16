@@ -102,7 +102,30 @@ function buildInjectScript(directory: string): string {
   // both forms of new-window navigation, so without this bridge, links in AI
   // replies do nothing when clicked. We forward http(s)/mailto URLs to the
   // outer relay page, which calls vscode.env.openExternal().
+  // External-link bridge: classify a URL as "external" only when it would
+  // actually open in the user's system browser. Anything that points back at
+  // our own proxy (same origin / 127.0.0.1 / localhost / relative path /
+  // hash) is treated as in-app navigation and left alone — session tabs,
+  // subagent links, share-session dialogs, and file tabs all live here.
   function isExternalUrl(href) {
+    if (typeof href !== "string" || href.length === 0) return false;
+    // Fragments and in-app paths: leave them to the WebUI's router.
+    if (href[0] === "#" || href[0] === "/") return false;
+    var proto = null;
+    var url = null;
+    try { url = new URL(href, window.location.href); proto = url.protocol; } catch (e) { return false; }
+    if (proto !== "http:" && proto !== "https:" && proto !== "mailto:") return false;
+    // Same-origin: the proxy serves the WebUI, so any host that matches the
+    // current document's origin (or is just 127.0.0.1/localhost — which is
+    // what opencode WebUI builds internally for session/subagent hrefs)
+    // must stay in the iframe so the WebUI's router handles it.
+    try {
+      if (url.host === window.location.host) return false;
+      var host = url.hostname.toLowerCase();
+      if (host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1") return false;
+    } catch (e) {}
+    return true;
+  }
     if (typeof href !== "string" || href.length === 0) return false;
     if (href[0] === "#" || href[0] === "/") return false;
     var proto = null;
