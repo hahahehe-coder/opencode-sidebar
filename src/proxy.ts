@@ -124,13 +124,7 @@ function buildInjectScript(directory: string): string {
       var host = url.hostname.toLowerCase();
       if (host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1") return false;
     } catch (e) {}
-    return true;
-  }
-    if (typeof href !== "string" || href.length === 0) return false;
-    if (href[0] === "#" || href[0] === "/") return false;
-    var proto = null;
-    try { proto = new URL(href, window.location.href).protocol; } catch (e) { return false; }
-    return proto === "http:" || proto === "https:" || proto === "mailto:";
+return true;
   }
   function forwardExternal(url) {
     try {
